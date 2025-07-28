@@ -5,6 +5,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -79,5 +80,23 @@ public class ClimberSubsystem extends SubsystemBase {
             SmartDashboard.setDefaultNumber("Target Velocity", 0);
             SmartDashboard.setDefaultBoolean("Control Mode", false);
             SmartDashboard.setDefaultBoolean("Reset Encoder", false);
+    }
+    public Command climberUp() {
+        return this.run(() -> {
+            m_climberMotorL.set(-.1);
+            m_climberMotorR.set(-.1);
+        });
+    }
+    public Command climberDown() {
+        return this.run(() -> {
+            m_climberMotorL.set(.1);
+            m_climberMotorR.set(.1);
+        });
+    }
+    public Command climberStop() {
+        return this.run(() -> {
+            m_climberMotorL.set(0);
+            m_climberMotorR.set(0);
+        });
     }
 }
