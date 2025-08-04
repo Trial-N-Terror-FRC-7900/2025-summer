@@ -7,29 +7,32 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClimberConstants;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkClosedLoopController;
-
 
 public class ClimberSubsystem extends SubsystemBase {
     private SparkMax m_climberMotorL;
     private SparkMax m_climberMotorR;
     private SparkMaxConfig motorConfig;
-    private SparkClosedLoopController closedLoopController;
+    private SparkClosedLoopController closedLoopControllerL;
+    private SparkClosedLoopController closedLoopControllerR;
+
     private RelativeEncoder encoder;
 
     public ClimberSubsystem() {
         m_climberMotorL = new SparkMax(17, MotorType.kBrushless);
-        closedLoopController = m_climberMotorL.getClosedLoopController();
+        closedLoopControllerL = m_climberMotorL.getClosedLoopController();
         encoder = m_climberMotorL.getEncoder();
 
         m_climberMotorR = new SparkMax(18, MotorType.kBrushless);
-        closedLoopController = m_climberMotorR.getClosedLoopController();
+        closedLoopControllerR = m_climberMotorR.getClosedLoopController();
         encoder = m_climberMotorR.getEncoder();
     
         /*
@@ -37,7 +40,8 @@ public class ClimberSubsystem extends SubsystemBase {
          * configuration parameters for the SPARK MAX that we will set below.
          */
         motorConfig = new SparkMaxConfig();
-    
+
+        motorConfig.smartCurrentLimit(30);
         /*
          * Configure the encoder. For this specific example, we are using the
          * integrated encoder of the NEO, and we don't need to configure it. If
@@ -74,6 +78,7 @@ public class ClimberSubsystem extends SubsystemBase {
             */
             m_climberMotorL.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
             m_climberMotorR.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+            
 
         // Initialize dashboard values
             SmartDashboard.setDefaultNumber("Target Position", 0);
@@ -83,14 +88,30 @@ public class ClimberSubsystem extends SubsystemBase {
     }
     public Command climberUp() {
         return this.run(() -> {
-            m_climberMotorL.set(-.1);
-            m_climberMotorR.set(-.1);
+            closedLoopControllerL.setReference(
+                ClimberConstants.ClimberMotorUp, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
+            closedLoopControllerR.setReference(
+                ClimberConstants.ClimberMotorUp, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
         });
     }
     public Command climberDown() {
         return this.run(() -> {
-            m_climberMotorL.set(.1);
-            m_climberMotorR.set(.1);
+            closedLoopControllerL.setReference(
+                ClimberConstants.ClimberMotorDown, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
+            closedLoopControllerR.setReference(
+                ClimberConstants.ClimberMotorDown, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
         });
     }
     public Command climberStop() {

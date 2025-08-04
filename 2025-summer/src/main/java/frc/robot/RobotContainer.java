@@ -175,8 +175,8 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
     }
-      driverXbox.povUp().onTrue(climber.climberUp()).onFalse(climber.climberStop());
-      driverXbox.povDown().onTrue(climber.climberDown()).onFalse(climber.climberStop());
+      driverXbox.povUp().onTrue(climber.climberUp());
+      driverXbox.povDown().onTrue(climber.climberDown());
   }
 
   /**
