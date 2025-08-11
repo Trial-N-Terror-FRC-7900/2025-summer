@@ -48,4 +48,14 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+
+  public static class ShoulderConstants
+  {
+    //placeholder vals
+    public static final int armMotor1CanID = 10; //left
+    public static final int armMotor2CanID = 11; //right
+    public static final double armAmp = 15.00;
+    public static final double armDown = 0.00;
+    public static final double armSpeaker = 10.00;
+  }
 }

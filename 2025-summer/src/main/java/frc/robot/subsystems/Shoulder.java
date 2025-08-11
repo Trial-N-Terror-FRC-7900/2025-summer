@@ -3,9 +3,12 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -21,22 +24,29 @@ import frc.robot.Constants.ShoulderConstants;
 public class Shoulder extends SubsystemBase {
 
     private SparkMaxConfig motorConfig;
+    private SparkMaxConfig followerMotorConfig;
     private SparkMax m_armMotor1;
     private SparkMax m_armMotor2;
-    private SparkClosedLoopController m_pidcontroller;
-    private AbsoluteEncoder m_encoder;
+    private SparkClosedLoopController m_pidcontroller1;
+    private SparkClosedLoopController m_pidcontroller2;
+    private AbsoluteEncoder m_encoder1;
 
+    private RelativeEncoder encoder;
 
     public Shoulder() {
         motorConfig = new SparkMaxConfig();
+        followerMotorConfig = new SparkMaxConfig();
 
-        m_armMotor1 = new SparkMax(ShoulderConstants.armMortar1CanID, MotorType.kBrushless);
+        m_armMotor1 = new SparkMax(ShoulderConstants.armMotor1CanID, MotorType.kBrushless);
+        m_pidcontroller1 = m_armMotor1.getClosedLoopController();
+        m_encoder1 = m_armMotor1.getAbsoluteEncoder();
+        encoder = m_armMotor1.getEncoder();
 
-        m_armMotor2 = new SparkMax(ShoulderConstants.armMortar1CanID, MotorType.kBrushless);
+        m_armMotor2 = new SparkMax(ShoulderConstants.armMotor2CanID, MotorType.kBrushless);
 
-        m_encoder = motor.getencoder();
+        //LEADER CONFIG
 
-        motorConfig.m_encoder
+        motorConfig.encoder
             .positionConversionFactor(1)
             .velocityConversionFactor(1);
 
@@ -68,22 +78,59 @@ public class Shoulder extends SubsystemBase {
 
         m_armMotor1.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         m_armMotor2.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-        
-    
+
+        //FOLLOWER CONFIG
+
+        followerMotorConfig.follow(ShoulderConstants.armMotor1CanID, true);
     }
+
     public Command IntakeTransfer(){
-        return this.runOnce(() -> m_pidcontroller.setReference(ShoulderConstants.armDown, SparkMax.ControlType.kPosition));
+        return this.runOnce(() -> {
+            m_pidcontroller1.setReference(
+                ShoulderConstants.armDown, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
+            //m_pidcontroller2.setReference(
+                //ShoulderConstants.armDown, 
+                //ControlType.kPosition,
+                //ClosedLoopSlot.kSlot0
+            //);
+        });
     }
+
     public Command armAmp(){
         //call to specific rotation first
         //m_armMotor1.set(0);
-        return this.run(() -> m_pidcontroller.setReference(ShoulderConstants.armAmp, SparkMax.ControlType.kPosition));
-      }
+        return this.run(() -> {
+            m_pidcontroller1.setReference(
+                ShoulderConstants.armAmp, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
+            m_pidcontroller2.setReference(
+                ShoulderConstants.armAmp, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
+        });
+    }
     
     public Command armSpeaker() {
         //m_armMotor1.set(1*flip);
         //m_armMotor2.set(-1*flip);
         //m_armMotor1.get();
-        return this.runOnce(() -> m_pidcontroller.setReference(ShoulderConstants.armSpeaker, SparkMax.ControlType.kPosition));
+        return this.run(() -> {
+            m_pidcontroller1.setReference(
+                ShoulderConstants.armSpeaker, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
+            m_pidcontroller2.setReference(
+                ShoulderConstants.armSpeaker, 
+                ControlType.kPosition,
+                ClosedLoopSlot.kSlot0
+            );
+        });
     }
 }
