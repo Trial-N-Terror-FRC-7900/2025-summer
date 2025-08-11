@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -35,8 +36,8 @@ public class RobotContainer
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                                "swerve/neo"));
-
+                                                                                "swerve/maxSwerve"));
+  private final ClimberSubsystem      climber    = new ClimberSubsystem();
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
@@ -174,7 +175,8 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
     }
-
+      driverXbox.povUp().onTrue(climber.climberUp());
+      driverXbox.povDown().onTrue(climber.climberDown());
   }
 
   /**
