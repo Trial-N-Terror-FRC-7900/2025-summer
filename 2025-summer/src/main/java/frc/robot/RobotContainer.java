@@ -176,6 +176,7 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     }
     driverXbox.a().onTrue(arm.IntakeTransfer());
+    driverXbox.y().onTrue(arm.armSpeaker());
 
   }
 

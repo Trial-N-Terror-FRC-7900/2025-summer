@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -27,9 +28,8 @@ public class Shoulder extends SubsystemBase {
     private SparkMaxConfig followerMotorConfig;
     private SparkMax m_armMotor1;
     private SparkMax m_armMotor2;
-    private SparkClosedLoopController m_pidcontroller1;
-    private SparkClosedLoopController m_pidcontroller2;
-    private AbsoluteEncoder m_encoder1;
+    private SparkClosedLoopController m_pidcontroller;
+    private AbsoluteEncoder m_encoder;
 
     private RelativeEncoder encoder;
 
@@ -38,26 +38,27 @@ public class Shoulder extends SubsystemBase {
         followerMotorConfig = new SparkMaxConfig();
 
         m_armMotor1 = new SparkMax(ShoulderConstants.armMotor1CanID, MotorType.kBrushless);
-        m_pidcontroller1 = m_armMotor1.getClosedLoopController();
-        m_encoder1 = m_armMotor1.getAbsoluteEncoder();
-        encoder = m_armMotor1.getEncoder();
 
         m_armMotor2 = new SparkMax(ShoulderConstants.armMotor2CanID, MotorType.kBrushless);
+        m_pidcontroller = m_armMotor2.getClosedLoopController();
+        m_encoder = m_armMotor2.getAbsoluteEncoder();
+        encoder = m_armMotor2.getEncoder();
 
         //LEADER CONFIG
-
+        //motorConfig.inverted(true);
+        
         motorConfig.encoder
             .positionConversionFactor(1)
             .velocityConversionFactor(1);
 
         motorConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             // Set PID values for position control. We don't need to pass a closed
             // loop slot, as it will default to slot 0.
             .p(0.4)
             .i(0)
             .d(0)
-            .outputRange(-1, 1)
+            .outputRange(-0.5, 1)
             // Set PID values for velocity control in slot 1
             .p(0.0001, ClosedLoopSlot.kSlot1)
             .i(0, ClosedLoopSlot.kSlot1)
@@ -76,26 +77,23 @@ public class Shoulder extends SubsystemBase {
             .maxVelocity(6000, ClosedLoopSlot.kSlot1)
             .allowedClosedLoopError(1, ClosedLoopSlot.kSlot1);
 
-        m_armMotor1.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         m_armMotor2.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
         //FOLLOWER CONFIG
 
-        followerMotorConfig.follow(ShoulderConstants.armMotor1CanID, true);
+        followerMotorConfig.follow(ShoulderConstants.armMotor2CanID, true);
+        m_armMotor1.configure(followerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
     }
 
     public Command IntakeTransfer(){
         return this.runOnce(() -> {
-            m_pidcontroller1.setReference(
+            m_pidcontroller.setReference(
                 ShoulderConstants.armDown, 
                 ControlType.kPosition,
                 ClosedLoopSlot.kSlot0
             );
-            //m_pidcontroller2.setReference(
-                //ShoulderConstants.armDown, 
-                //ControlType.kPosition,
-                //ClosedLoopSlot.kSlot0
-            //);
+            //m_armMotor2.set(0);
         });
     }
 
@@ -103,12 +101,7 @@ public class Shoulder extends SubsystemBase {
         //call to specific rotation first
         //m_armMotor1.set(0);
         return this.run(() -> {
-            m_pidcontroller1.setReference(
-                ShoulderConstants.armAmp, 
-                ControlType.kPosition,
-                ClosedLoopSlot.kSlot0
-            );
-            m_pidcontroller2.setReference(
+            m_pidcontroller.setReference(
                 ShoulderConstants.armAmp, 
                 ControlType.kPosition,
                 ClosedLoopSlot.kSlot0
@@ -117,16 +110,8 @@ public class Shoulder extends SubsystemBase {
     }
     
     public Command armSpeaker() {
-        //m_armMotor1.set(1*flip);
-        //m_armMotor2.set(-1*flip);
-        //m_armMotor1.get();
         return this.run(() -> {
-            m_pidcontroller1.setReference(
-                ShoulderConstants.armSpeaker, 
-                ControlType.kPosition,
-                ClosedLoopSlot.kSlot0
-            );
-            m_pidcontroller2.setReference(
+            m_pidcontroller.setReference(
                 ShoulderConstants.armSpeaker, 
                 ControlType.kPosition,
                 ClosedLoopSlot.kSlot0

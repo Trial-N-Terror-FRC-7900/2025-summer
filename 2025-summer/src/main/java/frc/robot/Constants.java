@@ -54,8 +54,9 @@ public final class Constants
     //placeholder vals
     public static final int armMotor1CanID = 10; //left
     public static final int armMotor2CanID = 11; //right
-    public static final double armAmp = 15.00;
+    public static final double armAmp = 0.50;
     public static final double armDown = 0.00;
-    public static final double armSpeaker = 10.00;
+    public static final double armSpeaker = 0.30;
+    //more than .6 causes a bruh moment
   }
 }
