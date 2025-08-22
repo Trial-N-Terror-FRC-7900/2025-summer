@@ -59,4 +59,10 @@ public final class Constants
     public static final double armSpeaker = 0.30;
     //more than .6 causes a bruh moment
   }
+
+  public static class ClimberConstants
+  {
+    public static final double ClimberMotorUp = -50.00;
+    public static final double ClimberMotorDown = 0.0;
+  }
 }
