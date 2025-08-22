@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -38,10 +39,9 @@ public class RobotContainer
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/maxSwerve"));
   private final Shoulder arm = new Shoulder();
-
-  private final ClimberSubsystem      climber    = new ClimberSubsystem();
   
-  /** 
+  private final ClimberSubsystem      climber    = new ClimberSubsystem();
+  /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -180,7 +180,8 @@ public class RobotContainer
     }
     driverXbox.a().onTrue(arm.IntakeTransfer());
     driverXbox.y().onTrue(arm.armSpeaker());
-
+    driverXbox.povUp().onTrue(climber.climberUp());
+    driverXbox.povDown().onTrue(climber.climberDown());
   }
 
   /**
