@@ -26,6 +26,7 @@ public class Shoulder extends SubsystemBase {
 
     private SparkMaxConfig motorConfig;
     private SparkMaxConfig followerMotorConfig;
+    private AbsoluteEncoderConfig absEncoderConfig;
     private SparkMax m_armMotor1;
     private SparkMax m_armMotor2;
     private SparkClosedLoopController m_pidcontroller;
@@ -36,6 +37,7 @@ public class Shoulder extends SubsystemBase {
     public Shoulder() {
         motorConfig = new SparkMaxConfig();
         followerMotorConfig = new SparkMaxConfig();
+        absEncoderConfig = new AbsoluteEncoderConfig();
 
         m_armMotor1 = new SparkMax(ShoulderConstants.armMotor1CanID, MotorType.kBrushless);
 
@@ -77,14 +79,16 @@ public class Shoulder extends SubsystemBase {
             .maxVelocity(6000, ClosedLoopSlot.kSlot1)
             .allowedClosedLoopError(1, ClosedLoopSlot.kSlot1);
 
+        absEncoderConfig.zeroOffset(0.0);
+        motorConfig.apply(absEncoderConfig);
+
         m_armMotor2.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
         //FOLLOWER CONFIG
 
         followerMotorConfig.follow(ShoulderConstants.armMotor2CanID, true);
         m_armMotor1.configure(followerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-
-    }
+        }
 
     public Command IntakeTransfer(){
         return this.runOnce(() -> {
