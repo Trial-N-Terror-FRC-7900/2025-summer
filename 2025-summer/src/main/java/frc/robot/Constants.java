@@ -49,6 +49,17 @@ public final class Constants
     public static final double TURN_CONSTANT    = 6;
   }
 
+  public static class ShoulderConstants
+  {
+    //placeholder vals
+    public static final int armMotor1CanID = 10; //left
+    public static final int armMotor2CanID = 11; //right
+    public static final double armAmp = 0.50;
+    public static final double armDown = 0.00;
+    public static final double armSpeaker = 0.30;
+    //more than .6 causes a bruh moment
+  }
+
   public static class ClimberConstants
   {
     public static final double ClimberMotorUp = -50.00;
