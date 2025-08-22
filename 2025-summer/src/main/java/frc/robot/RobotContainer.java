@@ -38,6 +38,9 @@ public class RobotContainer
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/maxSwerve"));
   private final Shoulder arm = new Shoulder();
+
+  private final ClimberSubsystem      climber    = new ClimberSubsystem();
+  
   /** 
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
