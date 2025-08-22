@@ -1,5 +1,5 @@
 package frc.robot.subsystems;
-
+//hello am robot
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -48,7 +48,9 @@ public class Shoulder extends SubsystemBase {
 
         //LEADER CONFIG
         //motorConfig.inverted(true);
-        
+
+        motorConfig.smartCurrentLimit(20);
+
         motorConfig.encoder
             .positionConversionFactor(1)
             .velocityConversionFactor(1);
@@ -79,7 +81,7 @@ public class Shoulder extends SubsystemBase {
             .maxVelocity(6000, ClosedLoopSlot.kSlot1)
             .allowedClosedLoopError(1, ClosedLoopSlot.kSlot1);
 
-        absEncoderConfig.zeroOffset(0.0);
+        absEncoderConfig.zeroOffset(0.98);
         motorConfig.apply(absEncoderConfig);
 
         m_armMotor2.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
