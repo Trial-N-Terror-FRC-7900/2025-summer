@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShoulderConstants;
 
-
 public class Shoulder extends SubsystemBase {
 
     private SparkMaxConfig motorConfig;
@@ -59,7 +58,7 @@ public class Shoulder extends SubsystemBase {
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             // Set PID values for position control. We don't need to pass a closed
             // loop slot, as it will default to slot 0.
-            .p(0.4)
+            .p(3)
             .i(0)
             .d(0)
             .outputRange(-0.5, 1)
@@ -123,5 +122,10 @@ public class Shoulder extends SubsystemBase {
                 ClosedLoopSlot.kSlot0
             );
         });
+    }
+
+    public void periodic () {
+
+        SmartDashboard.putNumber("encoder position", m_encoder.getPosition());
     }
 }
