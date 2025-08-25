@@ -1,11 +1,12 @@
 package frc.robot.subsystems;
-//hello am robot
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -13,37 +14,42 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.config.SparkMaxConfig; 
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShoulderConstants;
 
-public class Shoulder extends SubsystemBase {
+public class Shooter extends SubsystemBase {
 
     private SparkMaxConfig motorConfig;
-    private SparkMaxConfig followerMotorConfig;
-    private AbsoluteEncoderConfig absEncoderConfig;
-    private SparkMax m_armMotor1;
-    private SparkMax m_armMotor2;
-    private SparkClosedLoopController m_pidcontroller;
-    private AbsoluteEncoder m_encoder;
-    private RelativeEncoder encoder;
+    private SparkMax m_upperMotor;
+    private SparkMax m_lowerMotor;
+    private SparkMax m_indexMotor;
+    private SparkClosedLoopController m_upperpidcontroller;
+    private SparkClosedLoopController m_lowerpidcontroller;
+    private SparkClosedLoopController m_indexpidcontroller;
+    private RelativeEncoder upperEncoder;
+    private RelativeEncoder lowerEncoder;
+    private RelativeEncoder indexEncoder;
 
-    public Shoulder() {
+
+    public Shooter() {
         motorConfig = new SparkMaxConfig();
-        followerMotorConfig = new SparkMaxConfig();
-        absEncoderConfig = new AbsoluteEncoderConfig();
 
-        m_armMotor1 = new SparkMax(ShoulderConstants.armMotor1CanID, MotorType.kBrushless);
+        m_upperMotor = new SparkMax(ShooterConstants.UpperMotorID, MotorType.kBrushless);
+        m_upperpidcontroller = m_upperMotor.getClosedLoopController();
+        upperEncoder = m_upperMotor.getEncoder();
 
-        m_armMotor2 = new SparkMax(ShoulderConstants.armMotor2CanID, MotorType.kBrushless);
-        m_pidcontroller = m_armMotor2.getClosedLoopController();
-        m_encoder = m_armMotor2.getAbsoluteEncoder();
-        encoder = m_armMotor2.getEncoder();
+        m_lowerMotor = new SparkMax(ShooterConstants.LowerMotorID, MotorType.kBrushless);
+        m_lowerpidcontroller = m_lowerMotor.getClosedLoopController();
+        lowerEncoder = m_lowerMotor.getEncoder();
 
-        //LEADER CONFIG
-        //motorConfig.inverted(true);
+        m_indexMotor = new SparkMax(ShooterConstants.IndexMotorID, MotorType.kBrushless);
+        m_indexpidcontroller = m_indexMotor.getClosedLoopController();
+        indexEncoder = m_indexMotor.getEncoder();
 
         motorConfig.smartCurrentLimit(20);
 
@@ -52,7 +58,7 @@ public class Shoulder extends SubsystemBase {
             .velocityConversionFactor(1);
 
         motorConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             // Set PID values for position control. We don't need to pass a closed
             // loop slot, as it will default to slot 0.
             .p(3)
@@ -76,50 +82,37 @@ public class Shoulder extends SubsystemBase {
             .maxAcceleration(500, ClosedLoopSlot.kSlot1)
             .maxVelocity(6000, ClosedLoopSlot.kSlot1)
             .allowedClosedLoopError(1, ClosedLoopSlot.kSlot1);
-
-        absEncoderConfig.zeroOffset(0.98);
-        motorConfig.apply(absEncoderConfig);
-
-        m_armMotor2.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-
-        //FOLLOWER CONFIG
-
-        followerMotorConfig.follow(ShoulderConstants.armMotor2CanID, true);
-        m_armMotor1.configure(followerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-        }
-
-    public Command IntakeTransfer(){
-        return this.runOnce(() -> {
-            m_pidcontroller.setReference(
-                ShoulderConstants.armDown, 
-                ControlType.kPosition,
-                ClosedLoopSlot.kSlot0
-            );
-        });
+        
+        m_upperMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        m_lowerMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        m_indexMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
-    public Command armAmp(){
+    public Command shoot(){
         return this.run(() -> {
-            m_pidcontroller.setReference(
-                ShoulderConstants.armAmp, 
-                ControlType.kPosition,
+            m_upperpidcontroller.setReference(
+                ShooterConstants.fullSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+            m_lowerpidcontroller.setReference(
+                ShooterConstants.fullSpeed, 
+                ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
         });
     }
-    
-    public Command armSpeaker() {
+
+    public Command stop(){
         return this.run(() -> {
-            m_pidcontroller.setReference(
-                ShoulderConstants.armSpeaker, 
-                ControlType.kPosition,
-                ClosedLoopSlot.kSlot0
-            );
+            m_upperMotor.set(0);
+            m_lowerMotor.set(0);
         });
     }
 
-    public void periodic () {
-
-        SmartDashboard.putNumber("encoder position", m_encoder.getPosition());
+    public Command manualFeed(){
+        return this.run(() -> {
+            //switch from automatic note feeding to manual
+        });
     }
 }

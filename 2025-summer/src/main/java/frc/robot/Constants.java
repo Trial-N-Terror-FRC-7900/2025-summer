@@ -55,7 +55,7 @@ public final class Constants
     public static final int armMotor1CanID = 10; //left
     public static final int armMotor2CanID = 11; //right
     public static final double armAmp = 0.50;
-    public static final double armDown = 0.00;
+    public static final double armDown = 0.01;
     public static final double armSpeaker = 0.30;
     //more than .6 causes a bruh moment
   }
@@ -64,5 +64,13 @@ public final class Constants
   {
     public static final double ClimberMotorUp = -50.00;
     public static final double ClimberMotorDown = 0.0;
+  }
+
+  public static class ShooterConstants
+  {
+    public static final int UpperMotorID = 12;
+    public static final int LowerMotorID = 13;
+    public static final int IndexMotorID = 14;
+    public static final double fullSpeed = 2000.0;
   }
 }

@@ -86,6 +86,7 @@ public class ClimberSubsystem extends SubsystemBase {
             SmartDashboard.setDefaultBoolean("Control Mode", false);
             SmartDashboard.setDefaultBoolean("Reset Encoder", false);
     }
+    
     public Command climberUp() {
         return this.run(() -> {
             closedLoopControllerL.setReference(
@@ -100,6 +101,7 @@ public class ClimberSubsystem extends SubsystemBase {
             );
         });
     }
+
     public Command climberDown() {
         return this.run(() -> {
             closedLoopControllerL.setReference(
@@ -114,6 +116,7 @@ public class ClimberSubsystem extends SubsystemBase {
             );
         });
     }
+
     public Command climberStop() {
         return this.run(() -> {
             m_climberMotorL.set(0);
