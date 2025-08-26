@@ -97,16 +97,6 @@ public class Shoulder extends SubsystemBase {
             );
         });
     }
-
-    public Command armAmp(){
-        return this.run(() -> {
-            m_pidcontroller.setReference(
-                ShoulderConstants.armAmp, 
-                ControlType.kPosition,
-                ClosedLoopSlot.kSlot0
-            );
-        });
-    }
     
     public Command armSpeaker() {
         return this.run(() -> {
@@ -118,8 +108,35 @@ public class Shoulder extends SubsystemBase {
         });
     }
 
+    public Command manualUp() {
+        return this.run(() -> {
+            m_pidcontroller.setReference(
+                ShoulderConstants.manualSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+        });
+    }
+
+    public Command manualDown() {
+        return this.run(() -> {
+            m_pidcontroller.setReference(
+                -ShoulderConstants.manualSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+        });
+    }
+
+    public Command stop(){
+        return this.run(() -> {
+            m_armMotor1.set(0);
+            m_armMotor2.set(0);
+        });
+    }
+
     public void periodic () {
 
-        SmartDashboard.putNumber("encoder position", m_encoder.getPosition());
+        SmartDashboard.putNumber("arm encoder position", m_encoder.getPosition());
     }
 }

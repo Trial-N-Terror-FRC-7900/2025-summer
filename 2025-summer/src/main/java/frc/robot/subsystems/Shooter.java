@@ -101,12 +101,12 @@ public class Shooter extends SubsystemBase {
     public Command intake(){
         return this.run(() -> {
             m_upperpidcontroller.setReference(
-                -ShooterConstants.motorSpeed, 
+                -ShooterConstants.indexSpeed, 
                 ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
             m_lowerpidcontroller.setReference(
-                -ShooterConstants.motorSpeed, 
+                -ShooterConstants.indexSpeed, 
                 ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
@@ -140,5 +140,10 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> {
             m_indexMotor.set(0);
         });
+    }
+
+    public void periodic () {
+
+        SmartDashboard.setDefaultNumber("Shooter Wheels Speed:", ShooterConstants.motorSpeed);
     }
 }

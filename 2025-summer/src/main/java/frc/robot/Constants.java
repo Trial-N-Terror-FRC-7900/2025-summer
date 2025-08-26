@@ -51,13 +51,13 @@ public final class Constants
 
   public static class ShoulderConstants
   {
-    //placeholder vals
     public static final int armMotor1CanID = 10; //left
     public static final int armMotor2CanID = 11; //right
-    public static final double armAmp = 0.50;
     public static final double armDown = 0.01;
     public static final double armSpeaker = 0.30;
     //more than .6 causes a bruh moment
+    public static final double manualSpeed = 100;
+
   }
 
   public static class ClimberConstants
@@ -72,12 +72,12 @@ public final class Constants
     public static final int LowerMotorID = 13;
     public static final int IndexMotorID = 14;
     public static final double indexSpeed = 300.0;
-    public static final double motorSpeed = 2000.0;
+    public static double motorSpeed = 2000.0;
   }
 
   public static class IntakeConstants
   {
     public static final int IntakeMotorID = 9;
-    public static final double motorspeed = 0.0;
+    public static final double motorSpeed = 0.0;
   }
 }

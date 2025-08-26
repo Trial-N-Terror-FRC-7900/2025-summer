@@ -23,6 +23,7 @@ import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -44,6 +45,9 @@ public class RobotContainer
   private final ClimberSubsystem climber = new ClimberSubsystem();
 
   private final Shooter shooter = new Shooter();
+
+  private final Intake intake = new Intake();
+
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -186,6 +190,10 @@ public class RobotContainer
     driverXbox.y().onTrue(arm.armSpeaker());
     driverXbox.povUp().onTrue(climber.climberUp());
     driverXbox.povDown().onTrue(climber.climberDown());
+    driverXbox.povLeft().onTrue(arm.manualUp()).onFalse(arm.stop());
+    driverXbox.povRight().onTrue(arm.manualDown()).onFalse(arm.stop());
+    driverXbox.leftBumper().onTrue(shooter.intake()).onFalse(shooter.stop());
+    driverXbox.leftTrigger().onTrue(intake.run()).onFalse(intake.stop());
     driverXbox.rightBumper().onTrue(shooter.feed()).onFalse(shooter.indexStop());
     driverXbox.rightTrigger().onTrue(shooter.shoot()).onFalse(shooter.stop());
   }

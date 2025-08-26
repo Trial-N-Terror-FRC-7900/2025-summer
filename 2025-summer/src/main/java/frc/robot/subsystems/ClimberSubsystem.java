@@ -24,16 +24,12 @@ public class ClimberSubsystem extends SubsystemBase {
     private SparkClosedLoopController closedLoopControllerL;
     private SparkClosedLoopController closedLoopControllerR;
 
-    private RelativeEncoder encoder;
-
     public ClimberSubsystem() {
         m_climberMotorL = new SparkMax(17, MotorType.kBrushless);
         closedLoopControllerL = m_climberMotorL.getClosedLoopController();
-        encoder = m_climberMotorL.getEncoder();
 
         m_climberMotorR = new SparkMax(18, MotorType.kBrushless);
         closedLoopControllerR = m_climberMotorR.getClosedLoopController();
-        encoder = m_climberMotorR.getEncoder();
     
         /*
          * Create a new SPARK MAX configuration object. This will store the

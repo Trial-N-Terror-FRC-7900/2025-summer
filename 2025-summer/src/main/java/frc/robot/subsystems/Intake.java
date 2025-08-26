@@ -62,4 +62,20 @@ public class Intake extends SubsystemBase {
         
         m_intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
+
+    public Command run(){
+        return this.run(() -> {
+            m_intakepidcontroller.setReference(
+                IntakeConstants.motorSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+        });
+    }
+
+    public Command stop(){
+        return this.run(() -> {
+            m_intakeMotor.set(0);
+        });
+    }
 }
