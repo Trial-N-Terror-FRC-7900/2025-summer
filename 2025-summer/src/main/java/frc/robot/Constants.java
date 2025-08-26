@@ -71,6 +71,13 @@ public final class Constants
     public static final int UpperMotorID = 12;
     public static final int LowerMotorID = 13;
     public static final int IndexMotorID = 14;
-    public static final double fullSpeed = 2000.0;
+    public static final double indexSpeed = 300.0;
+    public static final double motorSpeed = 2000.0;
+  }
+
+  public static class IntakeConstants
+  {
+    public static final int IntakeMotorID = 9;
+    public static final double motorspeed = 0.0;
   }
 }

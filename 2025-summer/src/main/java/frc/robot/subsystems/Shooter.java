@@ -1,12 +1,9 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.AbsoluteEncoderConfig;
-import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -14,13 +11,11 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.config.SparkMaxConfig; 
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShoulderConstants;
 
 public class Shooter extends SubsystemBase {
 
@@ -91,12 +86,32 @@ public class Shooter extends SubsystemBase {
     public Command shoot(){
         return this.run(() -> {
             m_upperpidcontroller.setReference(
-                ShooterConstants.fullSpeed, 
+                ShooterConstants.motorSpeed, 
                 ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
             m_lowerpidcontroller.setReference(
-                ShooterConstants.fullSpeed, 
+                ShooterConstants.motorSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+        });
+    }
+
+    public Command intake(){
+        return this.run(() -> {
+            m_upperpidcontroller.setReference(
+                -ShooterConstants.motorSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+            m_lowerpidcontroller.setReference(
+                -ShooterConstants.motorSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+            m_indexpidcontroller.setReference(
+                -ShooterConstants.indexSpeed, 
                 ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
@@ -110,9 +125,20 @@ public class Shooter extends SubsystemBase {
         });
     }
 
-    public Command manualFeed(){
+    public Command feed(){
         return this.run(() -> {
             //switch from automatic note feeding to manual
+            m_indexpidcontroller.setReference(
+                ShooterConstants.indexSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
+        });
+    }
+
+    public Command indexStop(){
+        return this.run(() -> {
+            m_indexMotor.set(0);
         });
     }
 }

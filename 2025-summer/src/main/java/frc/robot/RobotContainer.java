@@ -186,6 +186,7 @@ public class RobotContainer
     driverXbox.y().onTrue(arm.armSpeaker());
     driverXbox.povUp().onTrue(climber.climberUp());
     driverXbox.povDown().onTrue(climber.climberDown());
+    driverXbox.rightBumper().onTrue(shooter.feed()).onFalse(shooter.indexStop());
     driverXbox.rightTrigger().onTrue(shooter.shoot()).onFalse(shooter.stop());
   }
 
