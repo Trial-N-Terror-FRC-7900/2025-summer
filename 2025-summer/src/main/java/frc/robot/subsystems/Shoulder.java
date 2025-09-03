@@ -110,21 +110,31 @@ public class Shoulder extends SubsystemBase {
 
     public Command manualUp() {
         return this.run(() -> {
-            m_pidcontroller.setReference(
-                ShoulderConstants.manualSpeed, 
-                ControlType.kVelocity,
-                ClosedLoopSlot.kSlot0
-            );
+            if (m_encoder.getPosition() < 50) {
+                m_pidcontroller.setReference(
+                    ShoulderConstants.manualSpeed, 
+                    ControlType.kVelocity,
+                    ClosedLoopSlot.kSlot0
+                );
+            }
+            else {
+                System.out.println("Can not go higher");
+            }
         });
     }
 
     public Command manualDown() {
         return this.run(() -> {
-            m_pidcontroller.setReference(
-                -ShoulderConstants.manualSpeed, 
-                ControlType.kVelocity,
-                ClosedLoopSlot.kSlot0
-            );
+            if (m_encoder.getPosition() > .2) {
+                m_pidcontroller.setReference(
+                    -ShoulderConstants.manualSpeed, 
+                    ControlType.kVelocity,
+                    ClosedLoopSlot.kSlot0
+                );
+            }
+            else {
+                System.out.println("Only up from here");
+            }
         });
     }
 
@@ -132,6 +142,12 @@ public class Shoulder extends SubsystemBase {
         return this.run(() -> {
             m_armMotor1.set(0);
             m_armMotor2.set(0);
+        });
+    }
+
+    public Command demoHello(){
+        return this.run(() -> {
+            System.out.println("Recombabulated.");
         });
     }
 

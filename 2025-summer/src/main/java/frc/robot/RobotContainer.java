@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -196,6 +197,7 @@ public class RobotContainer
     driverXbox.leftTrigger().onTrue(intake.run()).onFalse(intake.stop());
     driverXbox.rightBumper().onTrue(shooter.feed()).onFalse(shooter.indexStop());
     driverXbox.rightTrigger().onTrue(shooter.shoot()).onFalse(shooter.stop());
+    driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)).andThen(arm.demoHello()));
   }
 
   /**
