@@ -7,6 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SoftLimitConfig; //softlimits needs this
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -29,6 +30,7 @@ public class Shoulder extends SubsystemBase {
     private SparkClosedLoopController m_pidcontroller;
     private AbsoluteEncoder m_encoder;
     private RelativeEncoder encoder;
+    private SoftLimitConfig softLimitConfig;
 
     public Shoulder() {
         motorConfig = new SparkMaxConfig();
@@ -83,9 +85,14 @@ public class Shoulder extends SubsystemBase {
         m_armMotor2.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
         //FOLLOWER CONFIG
-
         followerMotorConfig.follow(ShoulderConstants.armMotor2CanID, true);
         m_armMotor1.configure(followerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+        //SOFT LIMITS
+        softLimitConfig.forwardSoftLimit(.45);
+        softLimitConfig.reverseSoftLimit(.00);
+        softLimitConfig.forwardSoftLimitEnabled(true);
+        softLimitConfig.reverseSoftLimitEnabled(true);
         }
 
     public Command IntakeTransfer(){
@@ -110,31 +117,21 @@ public class Shoulder extends SubsystemBase {
 
     public Command manualUp() {
         return this.run(() -> {
-            if (m_encoder.getPosition() < 50) {
-                m_pidcontroller.setReference(
-                    ShoulderConstants.manualSpeed, 
-                    ControlType.kVelocity,
-                    ClosedLoopSlot.kSlot0
-                );
-            }
-            else {
-                System.out.println("Can not go higher");
-            }
+            m_pidcontroller.setReference(
+                ShoulderConstants.manualSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
         });
     }
 
     public Command manualDown() {
         return this.run(() -> {
-            if (m_encoder.getPosition() > .2) {
-                m_pidcontroller.setReference(
-                    -ShoulderConstants.manualSpeed, 
-                    ControlType.kVelocity,
-                    ClosedLoopSlot.kSlot0
-                );
-            }
-            else {
-                System.out.println("Only up from here");
-            }
+            m_pidcontroller.setReference(
+                -ShoulderConstants.manualSpeed, 
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0
+            );
         });
     }
 
