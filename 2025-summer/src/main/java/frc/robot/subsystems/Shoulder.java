@@ -47,7 +47,12 @@ public class Shoulder extends SubsystemBase {
         //LEADER CONFIG
         //motorConfig.inverted(true);
 
-        motorConfig.smartCurrentLimit(20);
+        motorConfig.smartCurrentLimit(20)
+                    .softLimit
+                        .forwardSoftLimit(.35)
+                        .reverseSoftLimit(.00)
+                        .forwardSoftLimitEnabled(true)
+                        .reverseSoftLimitEnabled(true);
 
         motorConfig.encoder
             .positionConversionFactor(1)
@@ -87,15 +92,9 @@ public class Shoulder extends SubsystemBase {
         //FOLLOWER CONFIG
         followerMotorConfig.follow(ShoulderConstants.armMotor2CanID, true);
         m_armMotor1.configure(followerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-
-        //SOFT LIMITS
-        softLimitConfig.forwardSoftLimit(.45);
-        softLimitConfig.reverseSoftLimit(.00);
-        softLimitConfig.forwardSoftLimitEnabled(true);
-        softLimitConfig.reverseSoftLimitEnabled(true);
         }
 
-    public Command IntakeTransfer(){
+    public Command armIntake(){
         return this.runOnce(() -> {
             m_pidcontroller.setReference(
                 ShoulderConstants.armDown, 

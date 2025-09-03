@@ -86,7 +86,7 @@ public class Shooter extends SubsystemBase {
     public Command shoot(){
         return this.run(() -> {
             m_upperpidcontroller.setReference(
-                ShooterConstants.motorSpeed, 
+                -ShooterConstants.motorSpeed, 
                 ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
@@ -100,21 +100,9 @@ public class Shooter extends SubsystemBase {
 
     public Command intake(){
         return this.run(() -> {
-            m_upperpidcontroller.setReference(
-                -ShooterConstants.indexSpeed, 
-                ControlType.kVelocity,
-                ClosedLoopSlot.kSlot0
-            );
-            m_lowerpidcontroller.setReference(
-                -ShooterConstants.indexSpeed, 
-                ControlType.kVelocity,
-                ClosedLoopSlot.kSlot0
-            );
-            m_indexpidcontroller.setReference(
-                -ShooterConstants.indexSpeed, 
-                ControlType.kVelocity,
-                ClosedLoopSlot.kSlot0
-            );
+            m_upperMotor.set(.20);
+            m_lowerMotor.set(-.20);
+            m_indexMotor.set(.20);
         });
     }
 
@@ -122,17 +110,14 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> {
             m_upperMotor.set(0);
             m_lowerMotor.set(0);
+            m_indexMotor.set(0);
         });
     }
 
     public Command feed(){
         return this.run(() -> {
             //switch from automatic note feeding to manual
-            m_indexpidcontroller.setReference(
-                ShooterConstants.indexSpeed, 
-                ControlType.kVelocity,
-                ClosedLoopSlot.kSlot0
-            );
+            m_indexMotor.set(-1);
         });
     }
 

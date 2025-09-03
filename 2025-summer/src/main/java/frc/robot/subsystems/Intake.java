@@ -30,6 +30,9 @@ public class Intake extends SubsystemBase {
         m_intakepidcontroller = m_intakeMotor.getClosedLoopController();
         intakeEncoder = m_intakeMotor.getEncoder();
         
+
+        motorConfig.smartCurrentLimit(60);
+
         motorConfig.encoder
             .positionConversionFactor(1)
             .velocityConversionFactor(1);
@@ -65,11 +68,7 @@ public class Intake extends SubsystemBase {
 
     public Command run(){
         return this.run(() -> {
-            m_intakepidcontroller.setReference(
-                IntakeConstants.motorSpeed, 
-                ControlType.kVelocity,
-                ClosedLoopSlot.kSlot0
-            );
+            m_intakeMotor.set(-1);
         });
     }
 

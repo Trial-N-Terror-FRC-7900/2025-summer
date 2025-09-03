@@ -53,10 +53,10 @@ public final class Constants
   {
     public static final int armMotor1CanID = 10; //left
     public static final int armMotor2CanID = 11; //right
-    public static final double armDown = 0.01;
-    public static final double armSpeaker = 0.30;
+    public static final double armDown = 0.02;
+    public static final double armSpeaker = 0.25;
     //more than .6 causes a bruh moment
-    public static final double manualSpeed = 100;
+    public static final double manualSpeed = 50;
 
   }
 
