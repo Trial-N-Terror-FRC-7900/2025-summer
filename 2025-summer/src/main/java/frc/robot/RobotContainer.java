@@ -186,9 +186,9 @@ public class RobotContainer
       //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(Commands.none());
     }
-    driverXbox.a().onTrue(arm.armIntake());
-    driverXbox.b().onTrue(intake.run().alongWith(shooter.intake())).onFalse(intake.stop().alongWith(shooter.stop()));
-    driverXbox.y().onTrue(arm.armSpeaker());
+    driverXbox.a().onTrue(arm.goToIntake());
+    driverXbox.b().onTrue(arm.goToIntake().andThen(shooter.intake()).alongWith(intake.run())).onFalse(intake.stop().alongWith(shooter.stop()));
+    driverXbox.y().onTrue(arm.goToSpeaker());
     driverXbox.povUp().onTrue(climber.climberUp());
     driverXbox.povDown().onTrue(climber.climberDown());
     driverXbox.povLeft().onTrue(arm.manualUp()).onFalse(arm.stop());
@@ -197,7 +197,7 @@ public class RobotContainer
     driverXbox.leftTrigger().onTrue(intake.run()).onFalse(intake.stop());
     driverXbox.rightBumper().onTrue(shooter.feed()).onFalse(shooter.indexStop());
     driverXbox.rightTrigger().onTrue(shooter.shoot()).onFalse(shooter.stop());
-    driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)).andThen(arm.demoHello()));
+    driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
   }
 
   /**

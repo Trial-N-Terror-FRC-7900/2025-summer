@@ -94,7 +94,15 @@ public class Shoulder extends SubsystemBase {
         m_armMotor1.configure(followerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         }
 
-    public Command armIntake(){
+    public Command goToIntake() {
+        return armIntake().until(() -> m_encoder.getPosition() == ShoulderConstants.armDown);
+    }
+
+    public Command goToSpeaker() {
+        return armSpeaker().until(() -> m_encoder.getPosition() == ShoulderConstants.armSpeaker);
+    }
+
+    public Command armIntake() {
         return this.runOnce(() -> {
             m_pidcontroller.setReference(
                 ShoulderConstants.armDown, 
@@ -134,16 +142,10 @@ public class Shoulder extends SubsystemBase {
         });
     }
 
-    public Command stop(){
+    public Command stop() {
         return this.run(() -> {
             m_armMotor1.set(0);
             m_armMotor2.set(0);
-        });
-    }
-
-    public Command demoHello(){
-        return this.run(() -> {
-            System.out.println("Recombabulated.");
         });
     }
 
