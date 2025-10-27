@@ -15,6 +15,8 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
+import java.math.*;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -99,7 +101,7 @@ public class Shoulder extends SubsystemBase {
     }
 
     public Command goToSpeaker() {
-        return armSpeaker().until(() -> m_encoder.getPosition() == ShoulderConstants.armSpeaker);
+        return armSpeaker().until(() -> Math.abs(m_encoder.getPosition() - ShoulderConstants.armTolerance) <= ShoulderConstants.armTolerance);
     }
 
     public Command armIntake() {

@@ -57,7 +57,7 @@ public final class Constants
     public static final double armSpeaker = 0.25;
     //more than .6 causes a bruh moment
     public static final double manualSpeed = 50;
-
+    public static final double armTolerance = 0.01;
   }
 
   public static class ClimberConstants
