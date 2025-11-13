@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
@@ -64,6 +65,14 @@ public class Intake extends SubsystemBase {
             .allowedClosedLoopError(1, ClosedLoopSlot.kSlot1);
         
         m_intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    }
+
+    public Command intakePathplanner() {
+        return run().until(() -> true);
+    }
+
+    public Command stopPathplanner() {
+        return stop().until(() -> true);
     }
 
     public Command run(){

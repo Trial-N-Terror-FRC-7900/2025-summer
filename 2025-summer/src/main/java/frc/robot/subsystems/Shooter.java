@@ -12,10 +12,13 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
+import java.math.*;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShoulderConstants;
 
 public class Shooter extends SubsystemBase {
 
@@ -83,6 +86,22 @@ public class Shooter extends SubsystemBase {
         m_indexMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
+    public Command shootPathplanner() {
+        return shoot().until(() -> Math.abs(-upperEncoder.getVelocity() - ShooterConstants.motorSpeed) <= ShooterConstants.wheelSpeedTolerance && Math.abs(lowerEncoder.getVelocity() - ShooterConstants.motorSpeed) <= ShooterConstants.wheelSpeedTolerance);
+    }
+
+    public Command stopPathplanner() {
+        return stop().until(() -> true);
+    }
+
+    public Command intakePathplanner() {
+        return intake().until(() -> true);
+    }
+
+    public Command indexPathplanner() {
+        return index().until(() -> true);
+    }
+
     public Command shoot(){
         return this.run(() -> {
             m_upperpidcontroller.setReference(
@@ -114,7 +133,7 @@ public class Shooter extends SubsystemBase {
         });
     }
 
-    public Command feed(){
+    public Command index(){
         return this.run(() -> {
             //switch from automatic note feeding to manual
             m_indexMotor.set(-1);
@@ -129,6 +148,6 @@ public class Shooter extends SubsystemBase {
 
     public void periodic () {
 
-        SmartDashboard.setDefaultNumber("Shooter Wheels Speed:", ShooterConstants.motorSpeed);
+        SmartDashboard.putNumber("Shooter Wheels Speed:", upperEncoder.getVelocity());
     }
 }

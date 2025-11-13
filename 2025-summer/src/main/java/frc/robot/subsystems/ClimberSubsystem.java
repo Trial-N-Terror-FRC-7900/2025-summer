@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.ShooterConstants;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
@@ -23,13 +24,17 @@ public class ClimberSubsystem extends SubsystemBase {
     private SparkMaxConfig motorConfig;
     private SparkClosedLoopController closedLoopControllerL;
     private SparkClosedLoopController closedLoopControllerR;
+    private RelativeEncoder climberLEncoder;
+    private RelativeEncoder climberREncoder;
 
     public ClimberSubsystem() {
         m_climberMotorL = new SparkMax(17, MotorType.kBrushless);
         closedLoopControllerL = m_climberMotorL.getClosedLoopController();
+        climberLEncoder = m_climberMotorL.getEncoder();
 
         m_climberMotorR = new SparkMax(18, MotorType.kBrushless);
         closedLoopControllerR = m_climberMotorR.getClosedLoopController();
+        climberREncoder = m_climberMotorR.getEncoder();
     
         /*
          * Create a new SPARK MAX configuration object. This will store the
@@ -83,15 +88,23 @@ public class ClimberSubsystem extends SubsystemBase {
             SmartDashboard.setDefaultBoolean("Reset Encoder", false);
     }
     
+    public Command climberUpPathplanner() {
+        return climberUp().until(() -> Math.abs(climberLEncoder.getPosition() - ClimberConstants.ClimberMotorUp) <= ClimberConstants.ClimberTolerance && Math.abs(climberREncoder.getPosition() - ClimberConstants.ClimberMotorUp) <= ClimberConstants.ClimberTolerance);
+    }
+
+    public Command climberDownPathplanner() {
+        return climberDown().until(() -> true);
+    }
+
     public Command climberUp() {
         return this.run(() -> {
             closedLoopControllerL.setReference(
-                ClimberConstants.ClimberMotorUp, 
+                -ClimberConstants.ClimberMotorUp, 
                 ControlType.kPosition,
                 ClosedLoopSlot.kSlot0
             );
             closedLoopControllerR.setReference(
-                ClimberConstants.ClimberMotorUp, 
+                -ClimberConstants.ClimberMotorUp, 
                 ControlType.kPosition,
                 ClosedLoopSlot.kSlot0
             );

@@ -62,8 +62,9 @@ public final class Constants
 
   public static class ClimberConstants
   {
-    public static final double ClimberMotorUp = -50.00;
+    public static final double ClimberMotorUp = 50.00;
     public static final double ClimberMotorDown = 0.0;
+    public static final double ClimberTolerance = 1.0;
   }
 
   public static class ShooterConstants
@@ -73,6 +74,8 @@ public final class Constants
     public static final int IndexMotorID = 14;
     public static final double indexSpeed = 300.0;
     public static double motorSpeed = 2000.0;
+    public static final double wheelSpeedTolerance = 500;
+
   }
 
   public static class IntakeConstants

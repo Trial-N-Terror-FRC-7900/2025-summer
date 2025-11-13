@@ -101,7 +101,7 @@ public class Shoulder extends SubsystemBase {
     }
 
     public Command goToSpeaker() {
-        return armSpeaker().until(() -> Math.abs(m_encoder.getPosition() - ShoulderConstants.armTolerance) <= ShoulderConstants.armTolerance);
+        return armSpeaker().until(() -> Math.abs(m_encoder.getPosition() - ShoulderConstants.armSpeaker) <= ShoulderConstants.armTolerance);
     }
 
     public Command armIntake() {

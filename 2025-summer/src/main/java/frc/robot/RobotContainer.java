@@ -115,7 +115,14 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("goToIntake", arm.goToIntake());
     NamedCommands.registerCommand("goToSpeaker", arm.goToSpeaker());
-  
+    NamedCommands.registerCommand("shooterIntake", shooter.intakePathplanner());
+    NamedCommands.registerCommand("index", shooter.indexPathplanner());
+    NamedCommands.registerCommand("shoot", shooter.shootPathplanner());
+    NamedCommands.registerCommand("shooterStop", shooter.stopPathplanner());
+    NamedCommands.registerCommand("intake", intake.intakePathplanner());
+    NamedCommands.registerCommand("intakeStop", intake.stopPathplanner());
+    NamedCommands.registerCommand("climberUp", climber.climberUpPathplanner());
+    NamedCommands.registerCommand("climberDown", climber.climberDownPathplanner());
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -208,7 +215,7 @@ public class RobotContainer
     driverXbox.povRight().onTrue(arm.manualDown()).onFalse(arm.stop());
     driverXbox.leftBumper().onTrue(shooter.intake()).onFalse(shooter.stop());
     driverXbox.leftTrigger().onTrue(intake.run()).onFalse(intake.stop());
-    driverXbox.rightBumper().onTrue(shooter.feed()).onFalse(shooter.indexStop());
+    driverXbox.rightBumper().onTrue(shooter.index()).onFalse(shooter.indexStop());
     driverXbox.rightTrigger().onTrue(shooter.shoot()).onFalse(shooter.stop());
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
   }
