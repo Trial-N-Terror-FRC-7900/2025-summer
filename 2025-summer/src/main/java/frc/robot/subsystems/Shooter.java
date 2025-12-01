@@ -32,6 +32,7 @@ public class Shooter extends SubsystemBase {
     private RelativeEncoder upperEncoder;
     private RelativeEncoder lowerEncoder;
     private RelativeEncoder indexEncoder;
+    private double dashboardMotorSpeed = ShooterConstants.motorSpeed;
 
 
     public Shooter() {
@@ -49,7 +50,7 @@ public class Shooter extends SubsystemBase {
         m_indexpidcontroller = m_indexMotor.getClosedLoopController();
         indexEncoder = m_indexMotor.getEncoder();
 
-        motorConfig.smartCurrentLimit(20);
+        motorConfig.smartCurrentLimit(40);
 
         motorConfig.encoder
             .positionConversionFactor(1)
@@ -70,7 +71,7 @@ public class Shooter extends SubsystemBase {
             .velocityFF(1.0 / 5767, ClosedLoopSlot.kSlot1)
             .outputRange(-1, 1, ClosedLoopSlot.kSlot1);
 
-        motorConfig.closedLoop.maxMotion
+        /*motorConfig.closedLoop.maxMotion
             // Set MAXMotion parameters for position control. We don't need to pass
             // a closed loop slot, as it will default to slot 0.
             .maxVelocity(1000)
@@ -80,14 +81,14 @@ public class Shooter extends SubsystemBase {
             .maxAcceleration(500, ClosedLoopSlot.kSlot1)
             .maxVelocity(6000, ClosedLoopSlot.kSlot1)
             .allowedClosedLoopError(1, ClosedLoopSlot.kSlot1);
-        
+        */
         m_upperMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         m_lowerMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         m_indexMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     public Command shootPathplanner() {
-        return shoot().until(() -> Math.abs(-upperEncoder.getVelocity() - ShooterConstants.motorSpeed) <= ShooterConstants.wheelSpeedTolerance && Math.abs(lowerEncoder.getVelocity() - ShooterConstants.motorSpeed) <= ShooterConstants.wheelSpeedTolerance);
+        return shoot().until(() -> Math.abs(upperEncoder.getVelocity() - ShooterConstants.motorSpeed) <= ShooterConstants.wheelSpeedTolerance && Math.abs(lowerEncoder.getVelocity() + ShooterConstants.motorSpeed) <= ShooterConstants.wheelSpeedTolerance);
     }
 
     public Command stopPathplanner() {
@@ -105,12 +106,12 @@ public class Shooter extends SubsystemBase {
     public Command shoot(){
         return this.run(() -> {
             m_upperpidcontroller.setReference(
-                -ShooterConstants.motorSpeed, 
+                dashboardMotorSpeed, 
                 ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
             m_lowerpidcontroller.setReference(
-                ShooterConstants.motorSpeed, 
+                -dashboardMotorSpeed, 
                 ControlType.kVelocity,
                 ClosedLoopSlot.kSlot0
             );
@@ -124,6 +125,19 @@ public class Shooter extends SubsystemBase {
             m_indexMotor.set(.20);
         });
     }
+
+    /**
+     * ljsgdlifuhwdkjhfglksajgdfkjgwsdhgfj
+     * @param speed expectes motor power
+     */
+    public Command intakeSpeed(double speed){
+        return this.run(() -> {
+            m_upperMotor.set(speed);
+            m_lowerMotor.set(-speed);
+            m_indexMotor.set(speed);
+        });
+    }
+
 
     public Command stop(){
         return this.run(() -> {
@@ -148,6 +162,8 @@ public class Shooter extends SubsystemBase {
 
     public void periodic () {
 
-        SmartDashboard.putNumber("Shooter Wheels Speed:", upperEncoder.getVelocity());
+        SmartDashboard.putNumber("Top Shooter Wheels Speed:", upperEncoder.getVelocity());
+        SmartDashboard.putNumber("Bottom Shooter Wheels Speed:", lowerEncoder.getVelocity());
+        dashboardMotorSpeed = SmartDashboard.getNumber("Set Wheel Speed", ShooterConstants.motorSpeed);
     }
 }

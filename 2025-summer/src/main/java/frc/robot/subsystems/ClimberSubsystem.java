@@ -93,7 +93,7 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public Command climberDownPathplanner() {
-        return climberDown().until(() -> true);
+        return climberDown().until(() -> Math.abs(climberLEncoder.getPosition() - ClimberConstants.ClimberMotorDown) <= ClimberConstants.ClimberTolerance && Math.abs(climberREncoder.getPosition() - ClimberConstants.ClimberMotorDown) <= ClimberConstants.ClimberTolerance);
     }
 
     public Command climberUp() {

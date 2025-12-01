@@ -73,7 +73,7 @@ public final class Constants
     public static final int LowerMotorID = 13;
     public static final int IndexMotorID = 14;
     public static final double indexSpeed = 300.0;
-    public static double motorSpeed = 2000.0;
+    public static double motorSpeed = -2000.0;
     public static final double wheelSpeedTolerance = 500;
 
   }
